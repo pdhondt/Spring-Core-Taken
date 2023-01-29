@@ -2,6 +2,7 @@ package be.vdab.school.repositories;
 
 import be.vdab.school.domain.Leerling;
 import be.vdab.school.exceptions.RepositoryException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -13,9 +14,13 @@ import java.util.List;
 @Component
 @Primary
 public class PropertiesLeerlingRepository implements LeerlingRepository {
+    private final String pad;
+    public PropertiesLeerlingRepository(@Value("${leerlingenPropertiesPad}") String pad) {
+        this.pad = pad;
+    }
     @Override
     public List<Leerling> findAll() {
-        try (var stream = Files.lines(Path.of("/data/leerlingen.properties"))) {
+        try (var stream = Files.lines(Path.of(pad))) {
             return stream
                     .map(regel -> regel.split(":"))
                     .map(regelOnderdelen -> {
